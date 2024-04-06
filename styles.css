@@ -33,6 +33,11 @@ header .container {
     align-items: center;
 }
 
+.logo{
+    width: 100px; /* Ancho del logo */
+    height: auto; /* Altura ajustada automáticamente */
+}
+
 header h1 {
     margin: 0;
 }

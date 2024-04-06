@@ -1,15 +1,20 @@
 :root {
-    --color-fondo: #f5f5f5; /* Cambio de color de fondo */
-    --color-texto: #333333; /* Cambio de color de texto */
+    --color-fondo: #f5f5f5;
+    /* Cambio de color de fondo */
+    --color-texto: #333333;
+    /* Cambio de color de texto */
     --color-encabezado: #4d93fd;
-    --color-enlace: #007bff; /* Cambio de color de enlace */
-    --color-enlace-hover: #0056b3; /* Cambio de color de enlace al pasar el mouse */
+    --color-enlace: #007bff;
+    /* Cambio de color de enlace */
+    --color-enlace-hover: #0056b3;
+    /* Cambio de color de enlace al pasar el mouse */
     --color-boton-fondo: #007bff;
     --color-boton-texto: #ffffff;
     --color-boton-hover: #0056b3;
     --color-boton-archivo: #007bff;
     --color-boton-archivo-texto: #ffffff;
-    --color-borde-textarea: #ced4da; /* Cambio de color de borde para hacerlo más visible */
+    --color-borde-textarea: #ced4da;
+    /* Cambio de color de borde para hacerlo más visible */
 }
 
 body {
@@ -33,9 +38,11 @@ header .container {
     align-items: center;
 }
 
-.logo{
-    width: 100px; /* Ancho del logo */
-    height: auto; /* Altura ajustada automáticamente */
+.logo {
+    width: 100px;
+    /* Ancho del logo */
+    height: auto;
+    /* Altura ajustada automáticamente */
 }
 
 header h1 {
@@ -92,7 +99,8 @@ textarea {
     resize: vertical;
 }
 
-button, input[type="file"] {
+button,
+input[type="file"] {
     margin: 10px;
     padding: 10px 20px;
     border: none;
@@ -139,11 +147,18 @@ input[type="file"]:hover {
     border: 2px solid var(--color-borde-textarea);
     border-radius: 5px;
     font-family: 'Arial', sans-serif;
-    resize: vertical; /* Permite redimensionar verticalmente */
+    resize: vertical;
+    /* Permite redimensionar verticalmente */
 }
 
 #resultado-texto.hidden {
     display: none;
+}
+
+ /* Estilos para resaltar palabras reservadas */
+ .reservada {
+    font-weight: bold;
+    /* Opcional: hacer las palabras reservadas en negrita */
 }
 
 /* Estilos adicionales para hacer la página responsive */
@@ -159,7 +174,9 @@ input[type="file"]:hover {
         margin: 10px 0;
     }
 
-    textarea, button, input[type="file"] {
+    textarea,
+    button,
+    input[type="file"] {
         width: calc(100% - 20px);
     }
 }
@@ -192,4 +209,7 @@ input[type="file"]:hover {
     #documentacion {
         padding: 30px;
     }
+
+   
+
 }

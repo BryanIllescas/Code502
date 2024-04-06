@@ -3,33 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compilador de Música</title>
+    <title>Compilador de Música CODE502</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <h1>Compilador de Música</h1>
-        <nav id="menu">
-            <button id="btn-inicio"><a href="index.html">Inicio</a></button>
-            <button id="btn-documentacion"><a href="documentacion.html">Documentación</a></button>
-            
-        </nav>
-    </header>    
+        <div class="container">
+            <h1>Compilador de Música CODE502</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="documentacion.html">Documentación</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
     <main>
         <section id="codigo">
-            <textarea id="contenido-archivo" rows="10" cols="50"></textarea>
-            
+            <textarea id="contenido-archivo" rows="10" placeholder="Ingrese su código aquí"></textarea>
+            <div id="botones">
+                <button id="btn-analisis-lexico">Analizar Léxico</button>
+                <button id="btn-analisis-sintactico">Analizar Sintáctico</button>
+                <input type="file" id="archivo-input" accept=".txt">
+            </div>
         </section>
-        <section id="botones">
-            <button id="btn-analisis-lexico">Analizar Léxico</button>
-            <button id="btn-analisis-sintactico">Analizar Sintáctico</button>
-            <input type="file" id="archivo-input" accept=".txt">
-        </section>
+        
         <section id="resultado">
-            <h2>Resultado:</h2>
-            <pre id="resultado-texto"></pre>
+            <h2>Resultado del Compilador</h2>
+            <div id="resultado-wrapper">
+                <textarea id="resultado-texto" rows="10" readonly></textarea>
+                <div id="resultado-loading" class="hidden">
+                    <img src="music-9262_128.gif" alt="Cargando...">
+                </div>
+            </div>
         </section>
     </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Compilador de Música. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+    
     <script src="script.js"></script>
 </body>
 </html>

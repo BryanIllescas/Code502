@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <script src=script.js></script>   
-    <script src=token.js></script>   
+    <script src=script.js></script>
+    <script src=token.js></script>
+    <script src=reservadas.js></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compilador de Música CODE502</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <header>
         <div class="container">
@@ -21,46 +24,63 @@
             </nav>
         </div>
     </header>
-    
+
     <main>
         <section id="codigo">
-            <textarea id="codigoFuente" rows="10" cols="50"></textarea><br>
-            <button onclick="analizarCodigo()">Analizar</button><br><br>
-            <h2>Tokens:</h2>
-            <ul id="listaTokens"></ul>
+            <textarea id="codigoFuente" rows="10" cols="10"></textarea><br>
             <div id="botones">
-                <button id="btn-analisis-lexico">Analizar Léxico</button>
+                <button onclick="analizarCodigo()">Analizar Léxico</button><br><br>
                 <button id="btn-analisis-sintactico">Analizar Sintáctico</button>
                 <input type="file" id="archivo-input" accept=".txt">
             </div>
             <script>
-        $(document).ready(function () {
-            $('#abrirArchivo').click(function () {
-                $('#archivo').click();
-            });
+                $(document).ready(function () {
+                    $('#abrirArchivo').click(function () {
+                        $('#archivo').click();
+                    });
 
-            $('#archivo').change(function () {
-                const archivo = $(this).prop('files')[0];
-                const lector = new FileReader();
+                    $('#archivo').change(function () {
+                        const archivo = $(this).prop('files')[0];
+                        const lector = new FileReader();
 
-                lector.onload = function () {
-                    const codigo = lector.result;
-                    $('#codigo').val(codigo);
-                };
+                        lector.onload = function () {
+                            const codigo = lector.result;
+                            $('#codigo').val(codigo);
+                        };
 
-                lector.readAsText(archivo);
-            });
-        });
-    </script>
+                        lector.readAsText(archivo);
+                    });
+                });
+            </script>
         </section>
-        
+
         <section id="resultado">
-            <h2>Resultado del Compilador</h2>
-            <div id="resultado-wrapper">
-                <textarea id="resultado-texto" rows="10" readonly></textarea>
-                <div id="resultado-loading" class="hidden">
-                    <img src="music-9262_128.gif" alt="Cargando...">
-                </div>
+            <h2>Tokens</h2>
+            <table id="tablaTokens">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+            <h2>Errores Léxicos</h2>
+            <table id="tablaErrores">
+                <thead>
+                    <tr>
+                        <th>Token</th>
+                        <th>Error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <div id="resultado-loading" class="hidden">
+                <img src="music-9262_128.gif" alt="Cargando...">
+            </div>
             </div>
         </section>
     </main>
@@ -70,7 +90,6 @@
             <p>&copy; 2024 Compilador de Música. Todos los derechos reservados.</p>
         </div>
     </footer>
-    
-    <script src="script.js"></script>
 </body>
+
 </html>

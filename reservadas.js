@@ -1,30 +1,51 @@
 // Objeto con colores predefinidos para cada palabra reservada
 var coloresPalabrasReservadas = {
-    "si_suena_la_nota": "#FF5733", // Rojo
-    "si_no_suena_la_nota": "#33FF57", // Verde
-    "mientras_suena_la_melodia": "#3357FF", // Azul
-    "por_cada_compas_en_la_partitura": "#FF33D6", // Rosa
-    "tono_entero": "#FFA533", // Naranja
-    "tono_flotante": "#33FFE2", // Turquesa
-    "nota_musical": "#B933FF", // Púrpura
-    "cadena_de_sonido": "#FF336F", // Fucsia
-    "armonioso": "#FFE333", // Amarillo
-    "discordante": "#338AFF", // Azul claro
-    "interpretar": "#FF33D6", // Rosa
-    "detener": "#FFA533", // Naranja
-    "continuar_tocando": "#33FFE2", // Turquesa
-    "secuencia_melodica": "#B933FF", // Púrpura
-    "conjunto_musical": "#FF336F", // Fucsia
-    "variacion_de": "#FFE333", // Amarillo
-    "importar_partitura": "#338AFF", // Azul claro
-    "exportar_partitura": "#FF5733", // Rojo
-    "intentar_tocar": "#33FF57", // Verde
-    "atrapar_error_musical": "#3357FF", // Azul
-    "caso_de_acorde": "#FF33D6", // Rosa
-    "cambio_de_tonalidad": "#FFA533", // Naranja
-    "por_defecto_sonido": "#33FFE2", // Turquesa
-    "sonido_estatico": "#B933FF", // Púrpura
-    "fin_de_la_composicion": "#FF336F" // Fucsia
+    "NotAbstracta": "#FF5733", // abstract
+    "ClaseMusical": "#33FF57", // class
+    "EnumerarNota": "#3357FF", // enum
+    "ExtenderTempo": "#FF33D6", // extends
+    "FinalCancion": "#FFA533", // final
+    "ImplementarRitmo": "#33FFE2", // implements
+    "Interfaz": "#B933FF", // interface
+    "RitmoNativo": "#FF336F", // native
+    "EstrictoFP": "#FFE333", // strictfp
+    "SincronizarTempo": "#338AFF", // synchronized
+    "PausaMusica": "#FF5733", // break
+    "NotaCaso": "#33FF57", // case
+    "ContinuarMusica": "#3357FF", // continue
+    "NotaDefecto": "#FF33D6", // default
+    "NotaDo": "#FFA533", // do
+    "NotaAlternativa": "#33FFE2", // else
+    "NotaPor": "#B933FF", // for
+    "NotaSi": "#FF336F", // if
+    "RegresarNota": "#FFE333", // return
+    "CambioRitmo": "#338AFF", // switch
+    "MientrasSuena": "#FF5733", // while
+    "CancionPrivada": "#33FF57", // private
+    "CancionProtegida": "#3357FF", // protected
+    "CancionPublica": "#FF33D6", // public
+    "EsteRitmo": "#FFA533", // this
+    "SuperposicionRitmo": "#33FFE2", // super
+    "CapturaSonido": "#B933FF", // catch
+    "SonidoFinal": "#FF336F", // finally
+    "LanzarSonido": "#FFE333", // throw
+    "LanzamientosSonidos": "#338AFF", // throws
+    "IntentarSonido": "#FF5733", // try
+    "NotaBooleana": "#33FF57", // boolean
+    "NotaB": "#3357FF", // byte
+    "NotaC": "#FF33D6", // char
+    "NotaDoble": "#FFA533", // double
+    "NotaFa": "#33FFE2", // float
+    "NotaNum": "#B933FF", // int
+    "TempoLa": "#FF336F", // long
+    "NotaCorta": "#FFE333", // short
+    "NotaVacia": "#338AFF", // void
+    "letra": "#FF5733", // const
+    "AfirmarTema": "#33FF57", // assert
+    "IrTema": "#3357FF", // goto
+    "Falso": "#FF33D6", // false
+    "Nulo": "#FFA533", // null
+    "Verdadero": "#33FFE2" // true
     // Agrega más palabras reservadas y colores según sea necesario
 };
 

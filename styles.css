@@ -21,7 +21,7 @@ body {
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: var(--color-fondo);
+    background-color: black;
     color: var(--color-texto);
 }
 
@@ -91,12 +91,16 @@ textarea {
     height: 200px;
     padding: 10px;
     margin-bottom: 10px;
-    background-color: #fff;
-    color: #333;
+    background-color: black;
+    color: white;
     border: 2px solid var(--color-borde-textarea);
     border-radius: 5px;
-    font-family: 'Arial', sans-serif;
+    font-family: monospace;
     resize: vertical;
+}
+.botones {
+    background-color: black;
+    padding: 20px; /* Ajusta el espaciado interno según sea necesario */
 }
 
 button,
@@ -142,23 +146,27 @@ input[type="file"]:hover {
     height: 200px;
     padding: 10px;
     margin-top: 10px;
-    background-color: var(--color-fondo);
-    color: var(--color-texto);
+    background-color: black;
+    color: white;
     border: 2px solid var(--color-borde-textarea);
     border-radius: 5px;
-    font-family: 'Arial', sans-serif;
+    font-family: monospace;
     resize: vertical;
     /* Permite redimensionar verticalmente */
 }
 
-#resultado-texto.hidden {
-    display: none;
+
+.reservada {
+    color: orange; /* Color naranja para palabras reservadas */
 }
 
- /* Estilos para resaltar palabras reservadas */
- .reservada {
-    font-weight: bold;
-    /* Opcional: hacer las palabras reservadas en negrita */
+/* Estilos adicionales */
+#codigo-resaltado {
+    font-family: 'Arial', sans-serif;
+    white-space: pre-wrap; /* Para mantener saltos de línea */
+}
+#resultado-texto {
+    white-space: pre-wrap; /* Mantener espacios y saltos de línea */
 }
 
 /* Estilos adicionales para hacer la página responsive */
@@ -209,7 +217,4 @@ input[type="file"]:hover {
     #documentacion {
         padding: 30px;
     }
-
-   
-
 }

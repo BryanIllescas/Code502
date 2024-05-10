@@ -26,10 +26,10 @@
 
     <main>
         <section id="codigo">
-            <textarea id="codigoFuente" rows="10" cols="10"></textarea><br>
-            <div id="codigoResaltado" contenteditable="true"></div>
+            <h2>Ingresa tu Código</h2>
+            <textarea id="codigoFuente" rows="10" cols="10"></textarea>
             <div id="botones">
-                <button onclick="analizarCodigo()">Analizar Léxico</button><br><br>
+                <button onclick="analizarCodigo()">Analizar Léxico</button>
                 <button id="btn-analisis-sintactico">Analizar Sintáctico</button>
                 <input type="file" id="archivo-input" accept=".txt">
             </div>
@@ -37,8 +37,43 @@
 
         <section id="resultado">
             <h2>Código Resaltado</h2>
-            <div id="resultado-texto" contenteditable="true"></div>
-        </section>
+            <div id="resultado-texto" style="max-height: 200px; overflow-y: auto;" contenteditable="true"></div>
+        </section>        
+
+        <section id="resultado">
+            <h2>Tokens</h2>
+            <table id="tablaTokens">
+                <thead>
+                    <tr>
+                        <th>Línea</th>
+                        <th>Tipo</th>
+                        <th>Token</th>
+                        <th>Regex</th>
+                        <th>Subtipo</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+            <h2>Errores Léxicos</h2>
+            <table id="tablaErrores">
+                <thead>
+                    <tr>
+                        <th>Línea</th>
+                        <th>Tipo</th>
+                        <th>Token</th>
+                        <th>Regex</th>
+                        <th>Subtipo</th>
+                        <th>Valor</th>
+                        <th>Tipo de Error</th>
+                        <th>Error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
     </main>
 
     <footer>

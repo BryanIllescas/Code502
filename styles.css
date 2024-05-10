@@ -98,6 +98,41 @@ textarea {
     font-family: monospace;
     resize: vertical;
 }
+
+h2 {
+    color: #4d93fd;
+}
+
+thead {
+    color: blue;
+}
+
+/* Estilo para las tablas */
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+/* Estilo para los encabezados de las tablas */
+th {
+    background-color: #f2f2f2;
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+/* Estilo para las celdas de las tablas */
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+/* Estilo para las filas impares (opcional) */
+tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+
 .botones {
     background-color: black;
     padding: 20px; /* Ajusta el espaciado interno según sea necesario */

@@ -27,7 +27,7 @@ var tokens = {
     "guardia": { color: "#FFA533", tipo: "palabraReservada" },
     "cantidad": { color: "#FFA533", tipo: "palabraReservada" },
     "bandaentera": { color: "#FFA533", tipo: "palabraReservada" },
-    "#": { color: "#FFA533", tipo: "palabraReservada" },
+    "#": { color: "#FFA533", tipo: "salto de linea" },
     "camaras": { color: "#FFA533", tipo: "palabraReservada" },
     "pasillo": { color: "#FFA533", tipo: "palabraReservada" },
     "porque": { color: "#FFA533", tipo: "palabraReservada" },

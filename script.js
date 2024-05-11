@@ -38,7 +38,7 @@ function analizarCodigo() {
                 if (palabra === "") continue;
                 
                 // Normalizar la palabra eliminando caracteres especiales
-                let palabraNormalizada = palabra.replace(/[(){}[\],;"]/g, '');
+                let palabraNormalizada = palabra.replace(/[(){}[\],;]/g, '');
                 // Verificar si la palabra está en las palabras reservadas
                 if (tokens[palabraNormalizada]) {
                     let nuevaFila = tableRef.insertRow(-1);
@@ -75,7 +75,7 @@ function analizarCodigo() {
                     let nuevaCelda4 = nuevaFila.insertCell(3); // Tipo
                     nuevaCelda4.textContent = "Caracter";
                 } else {
-                    // Verificar si la palabra mal escrita está en las palabras reservadas
+                    // Verificar si la palabra está mal escrita
                     let palabraCorrecta = Object.keys(tokens).find(key => key.toLowerCase() === palabraNormalizada.toLowerCase());
                     if (palabraCorrecta) {
                         // La palabra está mal escrita pero existe una versión correcta en las palabras reservadas

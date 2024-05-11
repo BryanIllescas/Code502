@@ -11,221 +11,45 @@ function analizarCodigo() {
     let tableRef = document.getElementById("tablaTokens");
     let tableErr = document.getElementById("tablaErrores");
 
+    let tokens = window.TOKENS; // Obtener el objeto de tokens del archivo TOKENS.js
+    let palabrasAgregadas = new Set(); // Conjunto para almacenar las palabras ya agregadas
+
     function separarfilas(Texto, separador){
         var arregloFilas = newCodigoFuente.split(separador);
-        let ctrllineas = "";
-        let nuevaFila;
-        let nuevaCelda;
         let conteoF = 0;
 
         for (var a = 0; a < arregloFilas.length; a++) {
             conteoF += 1;
-            for (var b = 0; b < tokenAlfabeto.length; b++){
-                if (arregloFilas[a].includes(tokenAlfabeto[b])){
-                    nuevaFila = tableRef.insertRow(-1);
-                    nuevaCelda = nuevaFila.insertCell(0);       //#
-                    nuevaCelda.textContent = conteoF;
-                    nuevaCelda = nuevaFila.insertCell(1);       //Palabra
-                    nuevaCelda.textContent = tokenAlfabeto[b];
-                    nuevaCelda = nuevaFila.insertCell(2);       //No. Linea
-                    nuevaCelda.textContent = a + 1;
-                    nuevaCelda = nuevaFila.insertCell(3);
-                    nuevaCelda.textContent = "Token Alfabeto";  //Tipo
-                }else{
-                    nuevaFila = tableErr.insertRow(-1);
-                    nuevaCelda = nuevaFila.insertCell(0);           //#
-                    nuevaCelda.textContent = conteoF;
-                    nuevaCelda = nuevaFila.insertCell(1);           //Palabra
-                    nuevaCelda.textContent = tokenAlfabeto[b];
-                    nuevaCelda = nuevaFila.insertCell(2);           //No. Linea
-                    nuevaCelda.textContent = a + 1;
-                    nuevaCelda = nuevaFila.insertCell(3);           //Tipo Error
-                    nuevaCelda.textContent = "Léxico";
-                    nuevaCelda = nuevaFila.insertCell(4);           //Error
-                    nuevaCelda.textContent = "Token no identificado";
-                }            
-            }
-
-            for (var c = 0; c < tokenTipoDatos.length; c++){
-                if (arregloFilas[a].includes(tokenTipoDatos[c])){
-                    nuevaFila = tableRef.insertRow(-1);
-                    nuevaCelda = nuevaFila.insertCell(0);       //#
-                    nuevaCelda.textContent = conteoF;
-                    nuevaCelda = nuevaFila.insertCell(1);       //Palabra
-                    nuevaCelda.textContent = tokenTipoDatos[c];
-                    nuevaCelda = nuevaFila.insertCell(2);       //No. Linea
-                    nuevaCelda.textContent = a + 1;
-                    nuevaCelda = nuevaFila.insertCell(3);
-                    nuevaCelda.textContent = "Tipos de Datos";  //Tipo
-                }else{
-                    nuevaFila = tableErr.insertRow(-1);
-                    nuevaCelda = nuevaFila.insertCell(0);           //#
-                    nuevaCelda.textContent = conteoF;
-                    nuevaCelda = nuevaFila.insertCell(1);           //Palabra
-                    nuevaCelda.textContent = tokenTipoDatos[c];
-                    nuevaCelda = nuevaFila.insertCell(2);           //No. Linea
-                    nuevaCelda.textContent = a + 1;
-                    nuevaCelda = nuevaFila.insertCell(3);           //Tipo Error
-                    nuevaCelda.textContent = "Léxico";
-                    nuevaCelda = nuevaFila.insertCell(4);           //Error
-                    nuevaCelda.textContent = "Token no identificado";
-                }            
-            }
-
-            for (var d = 0; d < tokenCiclos.length; d++){
-                if (arregloFilas[a].includes(tokenCiclos[d])){
-                    nuevaFila = tableRef.insertRow(-1);
-                    nuevaCelda = nuevaFila.insertCell(0);       //#
-                    nuevaCelda.textContent = conteoF;
-                    nuevaCelda = nuevaFila.insertCell(1);       //Palabra
-                    nuevaCelda.textContent = tokenCiclos[d];
-                    nuevaCelda = nuevaFila.insertCell(2);       //No. Linea
-                    nuevaCelda.textContent = a + 1;
-                    nuevaCelda = nuevaFila.insertCell(3);
-                    nuevaCelda.textContent = "Palabras Reservadas";  //Tipo
-                }else{
-                    nuevaFila = tableErr.insertRow(-1);
-                    nuevaCelda = nuevaFila.insertCell(0);           //#
-                    nuevaCelda.textContent = conteoF;
-                    nuevaCelda = nuevaFila.insertCell(1);           //Palabra
-                    nuevaCelda.textContent = tokenCiclos[d];
-                    nuevaCelda = nuevaFila.insertCell(2);           //No. Linea
-                    nuevaCelda.textContent = a + 1;
-                    nuevaCelda = nuevaFila.insertCell(3);           //Tipo Error
-                    nuevaCelda.textContent = "Léxico";
-                    nuevaCelda = nuevaFila.insertCell(4);           //Error
-                    nuevaCelda.textContent = "Token no identificado";
-                }            
-            }
-
-            for (var e = 0; e < tokenOperaLogic.length; e++){
-                if (arregloFilas[a].includes(tokenOperaLogic[e])){
-                    nuevaFila = tableRef.insertRow(-1);
-                    nuevaCelda = nuevaFila.insertCell(0);       //#
-                    nuevaCelda.textContent = conteoF;
-                    nuevaCelda = nuevaFila.insertCell(1);       //Palabra
-                    nuevaCelda.textContent = tokenOperaLogic[e];
-                    nuevaCelda = nuevaFila.insertCell(2);       //No. Linea
-                    nuevaCelda.textContent = a + 1;
-                    nuevaCelda = nuevaFila.insertCell(3);
-                    nuevaCelda.textContent = "Operaciones Lógicas";  //Tipo
-                }else{
-                    nuevaFila = tableErr.insertRow(-1);
-                    nuevaCelda = nuevaFila.insertCell(0);           //#
-                    nuevaCelda.textContent = conteoF;
-                    nuevaCelda = nuevaFila.insertCell(1);           //Palabra
-                    nuevaCelda.textContent = tokenOperaLogic[e];
-                    nuevaCelda = nuevaFila.insertCell(2);           //No. Linea
-                    nuevaCelda.textContent = a + 1;
-                    nuevaCelda = nuevaFila.insertCell(3);           //Tipo Error
-                    nuevaCelda.textContent = "Léxico";
-                    nuevaCelda = nuevaFila.insertCell(4);           //Error
-                    nuevaCelda.textContent = "Token no identificado";
-                }            
-            }
-
-            for (var f = 0; f < tokenOperaAsign.length; f++){
-                if (arregloFilas[a].includes(tokenOperaAsign[f])){
-                    nuevaFila = tableRef.insertRow(-1);
-                    nuevaCelda = nuevaFila.insertCell(0);       //#
-                    nuevaCelda.textContent = conteoF;
-                    nuevaCelda = nuevaFila.insertCell(1);       //Palabra
-                    nuevaCelda.textContent = tokenOperaAsign[f];
-                    nuevaCelda = nuevaFila.insertCell(2);       //No. Linea
-                    nuevaCelda.textContent = a + 1;
-                    nuevaCelda = nuevaFila.insertCell(3);
-                    nuevaCelda.textContent = "Operaciones de Asignación";  //Tipo
-                }else{
-                    nuevaFila = tableErr.insertRow(-1);
-                    nuevaCelda = nuevaFila.insertCell(0);           //#
-                    nuevaCelda.textContent = conteoF;
-                    nuevaCelda = nuevaFila.insertCell(1);           //Palabra
-                    nuevaCelda.textContent = tokenOperaAsign[f];
-                    nuevaCelda = nuevaFila.insertCell(2);           //No. Linea
-                    nuevaCelda.textContent = a + 1;
-                    nuevaCelda = nuevaFila.insertCell(3);           //Tipo Error
-                    nuevaCelda.textContent = "Léxico";
-                    nuevaCelda = nuevaFila.insertCell(4);           //Error
-                    nuevaCelda.textContent = "Token no identificado";
-                }            
-            }
-
-            for (var g = 0; g < tokenOperarelac.length; g++){
-                if (arregloFilas[a].includes(tokenOperarelac[g])){
-                    nuevaFila = tableRef.insertRow(-1);
-                    nuevaCelda = nuevaFila.insertCell(0);       //#
-                    nuevaCelda.textContent = conteoF;
-                    nuevaCelda = nuevaFila.insertCell(1);       //Palabra
-                    nuevaCelda.textContent = tokenOperarelac[g];
-                    nuevaCelda = nuevaFila.insertCell(2);       //No. Linea
-                    nuevaCelda.textContent = a + 1;
-                    nuevaCelda = nuevaFila.insertCell(3);
-                    nuevaCelda.textContent = "Operaciones relacionales";  //Tipo
-                }else{
-                    nuevaFila = tableErr.insertRow(-1);
-                    nuevaCelda = nuevaFila.insertCell(0);           //#
-                    nuevaCelda.textContent = conteoF;
-                    nuevaCelda = nuevaFila.insertCell(1);           //Palabra
-                    nuevaCelda.textContent = tokenOperarelac[g];
-                    nuevaCelda = nuevaFila.insertCell(2);           //No. Linea
-                    nuevaCelda.textContent = a + 1;
-                    nuevaCelda = nuevaFila.insertCell(3);           //Tipo Error
-                    nuevaCelda.textContent = "Léxico";
-                    nuevaCelda = nuevaFila.insertCell(4);           //Error
-                    nuevaCelda.textContent = "Token no identificado";
-                }            
-            }
-
-            for (var h = 0; h < tokenOperaAritm.length; h++){
-                if (arregloFilas[a].includes(tokenOperaAritm[h])){
-                    nuevaFila = tableRef.insertRow(-1);
-                    nuevaCelda = nuevaFila.insertCell(0);       //#
-                    nuevaCelda.textContent = conteoF;
-                    nuevaCelda = nuevaFila.insertCell(1);       //Palabra
-                    nuevaCelda.textContent = tokenOperaAritm[h];
-                    nuevaCelda = nuevaFila.insertCell(2);       //No. Linea
-                    nuevaCelda.textContent = a + 1;
-                    nuevaCelda = nuevaFila.insertCell(3);
-                    nuevaCelda.textContent = "Operaciones aritméticas";  //Tipo
-                }else{
-                    nuevaFila = tableErr.insertRow(-1);
-                    nuevaCelda = nuevaFila.insertCell(0);           //#
-                    nuevaCelda.textContent = conteoF;
-                    nuevaCelda = nuevaFila.insertCell(1);           //Palabra
-                    nuevaCelda.textContent = tokenOperaAritm[h];
-                    nuevaCelda = nuevaFila.insertCell(2);           //No. Linea
-                    nuevaCelda.textContent = a + 1;
-                    nuevaCelda = nuevaFila.insertCell(3);           //Tipo Error
-                    nuevaCelda.textContent = "Léxico";
-                    nuevaCelda = nuevaFila.insertCell(4);           //Error
-                    nuevaCelda.textContent = "Token no identificado";
-                }            
-            }
-
-            for (var i = 0; i < tokenReservadas.length; i++){
-                if (arregloFilas[a].includes(tokenReservadas[i])){
-                    nuevaFila = tableRef.insertRow(-1);
-                    nuevaCelda = nuevaFila.insertCell(0);       //#
-                    nuevaCelda.textContent = conteoF;
-                    nuevaCelda = nuevaFila.insertCell(1);       //Palabra
-                    nuevaCelda.textContent = tokenReservadas[i];
-                    nuevaCelda = nuevaFila.insertCell(2);       //No. Linea
-                    nuevaCelda.textContent = a + 1;
-                    nuevaCelda = nuevaFila.insertCell(3);
-                    nuevaCelda.textContent = "Palabras reservadas";  //Tipo
-                }else{
-                    nuevaFila = tableErr.insertRow(-1);
-                    nuevaCelda = nuevaFila.insertCell(0);           //#
-                    nuevaCelda.textContent = conteoF;
-                    nuevaCelda = nuevaFila.insertCell(1);           //Palabra
-                    nuevaCelda.textContent = tokenReservadas[i];
-                    nuevaCelda = nuevaFila.insertCell(2);           //No. Linea
-                    nuevaCelda.textContent = a + 1;
-                    nuevaCelda = nuevaFila.insertCell(3);           //Tipo Error
-                    nuevaCelda.textContent = "Léxico";
-                    nuevaCelda = nuevaFila.insertCell(4);           //Error
-                    nuevaCelda.textContent = "Token no identificado";
-                }            
+            let palabras = arregloFilas[a].split(' '); // Dividir la línea en palabras
+            for (var b = 0; b < palabras.length; b++) {
+                let palabra = palabras[b];
+                // Verificar si la palabra está en las palabras reservadas sin considerar los caracteres adicionales
+                let palabraNormalizada = palabra.replace(/[(){}[\],;]/g, '');
+                if (tokens[palabraNormalizada] && !palabrasAgregadas.has(palabraNormalizada)) {
+                    palabrasAgregadas.add(palabraNormalizada); // Agregar la palabra al conjunto de palabras agregadas
+                    let nuevaFila = tableRef.insertRow(-1);
+                    let nuevaCelda1 = nuevaFila.insertCell(0); // #
+                    nuevaCelda1.textContent = conteoF;
+                    let nuevaCelda2 = nuevaFila.insertCell(1); // Palabra
+                    nuevaCelda2.textContent = palabraNormalizada;
+                    let nuevaCelda3 = nuevaFila.insertCell(2); // No. Linea
+                    nuevaCelda3.textContent = a + 1;
+                    let nuevaCelda4 = nuevaFila.insertCell(3); // Tipo
+                    nuevaCelda4.textContent = tokens[palabraNormalizada].tipo;
+                } else if (!palabrasAgregadas.has(palabraNormalizada)) {
+                    palabrasAgregadas.add(palabraNormalizada); // Agregar la palabra al conjunto de palabras agregadas
+                    let nuevaFilaErr = tableErr.insertRow(-1);
+                    let nuevaCeldaErr1 = nuevaFilaErr.insertCell(0); // #
+                    nuevaCeldaErr1.textContent = conteoF;
+                    let nuevaCeldaErr2 = nuevaFilaErr.insertCell(1); // Palabra
+                    nuevaCeldaErr2.textContent = palabraNormalizada;
+                    let nuevaCeldaErr3 = nuevaFilaErr.insertCell(2); // No. Linea
+                    nuevaCeldaErr3.textContent = a + 1;
+                    let nuevaCeldaErr4 = nuevaFilaErr.insertCell(3); // Tipo Error
+                    nuevaCeldaErr4.textContent = "Léxico";
+                    let nuevaCeldaErr5 = nuevaFilaErr.insertCell(4); // Error
+                    nuevaCeldaErr5.textContent = "Token no identificado";
+                }
             }
         }
     }

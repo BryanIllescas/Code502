@@ -43,6 +43,14 @@ var tokens = {
     "m+": { color: "purple", tipo: "operadorAritmetico" },
     "%": { color: "purple", tipo: "operadorAritmetico" },
     "~=~=": {color: "purple", tipo: "operadorAritmetico"},
+    "~=": {color: "purple", tipo: "operadorAsignacion"},
+    "d-": {color: "purple", tipo: "operadorAsignacion"},
+    "_": {color: "purple", tipo: "operadorLogico"},
+    "o": {color: "purple", tipo: "operadorLogico"},
+    "p_": {color: "purple", tipo: "relacionales"},
+    "g_": {color: "purple", tipo: "relacionales"},
+    "p~": {color: "purple", tipo: "relacionales"},
+    "g~": {color: "purple", tipo: "relacionales"},
     };
     
     // Exportar el objeto tokens para su uso en otros archivos

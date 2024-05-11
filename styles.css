@@ -253,3 +253,8 @@ input[type="file"]:hover {
         padding: 30px;
     }
 }
+#tablaTokens td,
+#tablaErrores td {
+    color: white;
+}
+

@@ -31,7 +31,8 @@
             <div id="botones">
                 <button onclick="analizarCodigo()">Analizar Léxico</button>
                 <button id="btn-analisis-sintactico">Analizar Sintáctico</button>
-                <input type="file" id="archivo-input" accept=".txt">
+                <input type="file" id="archivo-input" accept=".mkt">
+
             </div>
         </section>
 
@@ -77,6 +78,29 @@
             <p>&copy; 2024 Compilador de Música. Todos los derechos reservados.</p>
         </div>
     </footer>
+
+    <script>
+        // Función para leer el archivo seleccionado y colocar su contenido en el textarea
+        function leerArchivo(e) {
+            const archivo = e.target.files[0]; // Obtiene el primer archivo seleccionado
+
+            if (archivo) {
+                const lector = new FileReader(); // Crea un objeto FileReader
+
+                // Define la función que se ejecutará cuando se complete la lectura del archivo
+                lector.onload = function (event) {
+                    const contenido = event.target.result; // Obtiene el contenido del archivo
+                    document.getElementById('codigoFuente').value = contenido; // Coloca el contenido en el textarea
+                };
+
+                // Lee el archivo como texto
+                lector.readAsText(archivo);
+            }
+        }
+
+        // Asigna la función leerArchivo al evento change del input file
+        document.getElementById('archivo-input').addEventListener('change', leerArchivo);
+    </script>
 </body>
 
 </html>

@@ -39,26 +39,74 @@ function AnalisisLexico() {
     // Expresión regular compilada
     const exprReservada = new RegExp("^(arroz|jabón|licor|papel|estantería|producto|Super|mostrador|sucursal|gaseosa|rosaceas|muestra|muestrafin|scaner|salida|camaras|cupon|canasta)\s*$");
     const exprTipoDato = new RegExp("(^entera|cantidad|almendra|deslactosada|descremada|cafe)\s*$");
+    const exprAlfabeto = new RegExp("/\s+/");
+    const exprCiclos = new RegExp("^(agua|pura|canasta|carrito|caja|pasillo|porque|porque pasillo|marcas|gondola|botella)\s*$");
+    const exprOperaLogico = new RegExp("^(_|o|disponible|ocupado|guardia)\s*$")
+    const exprOperaAsignacion = new RegExp("~=|d-")
+    const exprOperaRelacional = new RegExp("p~|p_|g_|g~")
+    const exprOperaAritmetica = new RegExp("#|s+|r-|m+|%")
 
     for (let numLinea = 0; numLinea < lineas.length; numLinea++) {
         const palabras = lineas[numLinea].split(/\s+/);
         
         for (let i = 0; i < palabras.length; i++) {
             const palabra = palabras[i];
-            
+            //Expresión Reservadas
             if (exprReservada.test(palabra)) {
                 if (!ExpresionSI.hasOwnProperty(palabra)) {
                     ExpresionSI[palabra] = [];
                 }
                 ExpresionSI[palabra].push(numLinea + 1);
                 TipoSI[palabra] = "Reservada";
-
+            //Expresión Tipo de Dato
             }else if (exprTipoDato.test(palabra)) {
                 if (!ExpresionSI.hasOwnProperty(palabra)) {
                     ExpresionSI[palabra] = [];
                 }
                 ExpresionSI[palabra].push(numLinea + 1);
                 TipoSI[palabra] = "Tipo de Dato";
+            //Expresión Alfabeto
+             }else if (exprAlfabeto.test(palabra)) {
+                if (!ExpresionSI.hasOwnProperty(palabra)) {
+                    ExpresionSI[palabra] = [];
+                }
+                ExpresionSI[palabra].push(numLinea + 1);
+                TipoSI[palabra] = "Alfabeto";
+            //Expresión Ciclos
+            }else if (exprCiclos.test(palabra)) {
+                if (!ExpresionSI.hasOwnProperty(palabra)) {
+                    ExpresionSI[palabra] = [];
+                }
+                ExpresionSI[palabra].push(numLinea + 1);
+                TipoSI[palabra] = "Reservada de Ciclo";
+            //Expresión Operadores Lógicos
+            }else if (exprOperaLogico.test(palabra)) {
+                if (!ExpresionSI.hasOwnProperty(palabra)) {
+                    ExpresionSI[palabra] = [];
+                }
+                ExpresionSI[palabra].push(numLinea + 1);
+                TipoSI[palabra] = "Operador Lógico";
+            //Expresión Operadores Asignación
+            }else if (exprOperaAsignacion.test(palabra)) {
+                if (!ExpresionSI.hasOwnProperty(palabra)) {
+                    ExpresionSI[palabra] = [];
+                }
+                ExpresionSI[palabra].push(numLinea + 1);
+                TipoSI[palabra] = "Operador Asignación";
+            //Expresión Operadores Relacionales
+            }else if (exprOperaRelacional.test(palabra)) {
+                if (!ExpresionSI.hasOwnProperty(palabra)) {
+                    ExpresionSI[palabra] = [];
+                }
+                ExpresionSI[palabra].push(numLinea + 1);
+                TipoSI[palabra] = "Operador Relacional";
+            //Expresión Operadores Aritméticos
+            }else if (exprOperaAritmetica.test(palabra)) {
+                if (!ExpresionSI.hasOwnProperty(palabra)) {
+                    ExpresionSI[palabra] = [];
+                }
+                ExpresionSI[palabra].push(numLinea + 1);
+                TipoSI[palabra] = "Operador Aritméticos";
              } else {
                 if (!ExpresionNO.hasOwnProperty(palabra)) {
                     ExpresionNO[palabra] = [];
@@ -84,7 +132,7 @@ function AnalisisLexico() {
 
     conteoFilas = 0
     for (const nocoincide in ExpresionNO) {
-        if (nocoincide != "\s")
+        if (nocoincide != "/\s/")
             {
                 conteoFilas = conteoFilas + 1;
                 let nuevaFilaE = tableErr.insertRow();

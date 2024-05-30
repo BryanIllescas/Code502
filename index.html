@@ -29,19 +29,18 @@
             <h2>Ingresa tu Código</h2>
             <textarea id="codigoFuente" rows="10" cols="10"></textarea>
             <div id="botones">
-                <button onclick="analizarCodigo()">Analizar Léxico</button>
+                <button id= "btn-analisis-lexico">Analizar Léxico</button>
                 <button id="btn-analisis-sintactico">Analizar Sintáctico</button>
                 <input type="file" id="archivo-input" accept=".mkt">
 
             </div>
         </section>
-
         <section id="resultado">
             <h2>Código Resaltado</h2>
             <div id="resultado-texto" style="max-height: 200px; overflow-y: auto;" contenteditable="true"></div>
         </section>
 
-        <section id="resultado-tokens">
+        <section id="res_tokens">
             <h2>Tokens</h2>
             <table id="tablaTokens">
                 <thead>
@@ -55,8 +54,9 @@
                 <tbody>
                 </tbody>
             </table>
-
-            <h2>Errores Léxicos</h2>
+        </section>
+        <section id="res_errores">
+            <h2>Errores Lexicos</h2>
             <table id="tablaErrores">
                 <thead>
                     <tr>

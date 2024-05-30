@@ -1,115 +1,107 @@
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('btn-analisis-lexico').addEventListener('click', analizarCodigo);
+    document.getElementById('btn-analisis-lexico').addEventListener('click', AnalisisLexico);
 });
 
+let ExpresionSI = {};
+let TipoSI = {};
+let ExpresionNO = {};
+let conteoFilas = 0;
+
 function limpiarTablas() {
-    let tableRef = document.getElementById("tablaTokens");
-    let tableErr = document.getElementById("tablaErrores");
-    while (tableRef.rows.length > 1) {
-        tableRef.deleteRow(1);
+    ExpresionSI = {};
+    TipoSI = {};
+    ExpresionNO = {};
+    conteoFilas = 0;
+    
+    let tableReferencia = document.getElementById("tablaTokens");
+    let tableErrores = document.getElementById("tablaErrores");
+
+    console.log(tableReferencia.rows.length);
+    while (tableReferencia.rows.length > 1) {
+        tableReferencia.deleteRow(1);
     }
-    while (tableErr.rows.length > 1) {
-        tableErr.deleteRow(1);
+
+    console.log(tableErrores.rows.length);
+    while (tableErrores.rows.length> 1) {
+        tableErrores.deleteRow(1);
     }
 }
 
-function analizarCodigo() {
-    limpiarTablas(); // Limpia las tablas antes de analizar el código
-    let codigoFuente = document.getElementById('codigoFuente').value;
-    let newCodigoFuente = codigoFuente.toString().replaceAll("\n","|");
-    let codigoResaltado = resaltarPalabrasReservadas(codigoFuente);
-    document.getElementById('resultado-texto').innerHTML = codigoResaltado;
-
+function AnalisisLexico() {      
+    limpiarTablas();
+    
     let tableRef = document.getElementById("tablaTokens");
     let tableErr = document.getElementById("tablaErrores");
 
-    let tokens = window.TOKENS; // Obtener el objeto de tokens del archivo TOKENS.js
+    let codigoFuente = document.getElementById('codigoFuente').value;
+    const lineas = codigoFuente.split('\n');
 
-    function separarfilas(Texto, separador){
-        var arregloFilas = newCodigoFuente.split(separador);
-        let conteoF = 0;
+    // Expresión regular compilada
+    const exprReservada = new RegExp("^(arroz|jabón|licor|papel|estantería|producto|Super|mostrador|sucursal|gaseosa|rosaceas|muestra|muestrafin|scaner|salida|camaras|cupon|canasta)\s*$");
+    const exprTipoDato = new RegExp("(^entera|cantidad|almendra|deslactosada|descremada|cafe)\s*$");
 
-        for (var a = 0; a < arregloFilas.length; a++) {
-            conteoF += 1;
-            let palabras = arregloFilas[a].split(' '); // Dividir la línea en palabras
-            for (var b = 0; b < palabras.length; b++) {
-                let palabra = palabras[b].trim(); // Eliminar espacios al inicio y al final de la palabra
-                // Ignorar si la palabra es un espacio en blanco
-                if (palabra === "") continue;
-                
-                // Normalizar la palabra eliminando caracteres especiales
-                let palabraNormalizada = palabra.replace(/[(){}[\],;]/g, '');
-                // Verificar si la palabra está en las palabras reservadas
-                if (tokens[palabraNormalizada]) {
-                    let nuevaFila = tableRef.insertRow(-1);
-                    let nuevaCelda1 = nuevaFila.insertCell(0); // #
-                    nuevaCelda1.textContent = conteoF;
-                    let nuevaCelda2 = nuevaFila.insertCell(1); // Palabra
-                    nuevaCelda2.textContent = palabraNormalizada;
-                    let nuevaCelda3 = nuevaFila.insertCell(2); // No. Linea
-                    nuevaCelda3.textContent = a + 1;
-                    let nuevaCelda4 = nuevaFila.insertCell(3); // Tipo
-                    nuevaCelda4.textContent = tokens[palabraNormalizada].tipo;
-                } else if (palabra === "#") {
-                    // El símbolo "#" se considera como salto de línea
-                    let nuevaFilaErr = tableErr.insertRow(-1);
-                    let nuevaCeldaErr1 = nuevaFilaErr.insertCell(0); // #
-                    nuevaCeldaErr1.textContent = conteoF;
-                    let nuevaCeldaErr2 = nuevaFilaErr.insertCell(1); // Palabra
-                    nuevaCeldaErr2.textContent = palabra;
-                    let nuevaCeldaErr3 = nuevaFilaErr.insertCell(2); // No. Linea
-                    nuevaCeldaErr3.textContent = a + 1;
-                    let nuevaCeldaErr4 = nuevaFilaErr.insertCell(3); // Tipo Error
-                    nuevaCeldaErr4.textContent = "Léxico";
-                    let nuevaCeldaErr5 = nuevaFilaErr.insertCell(4); // Error
-                    nuevaCeldaErr5.textContent = "El símbolo '#' debe estar separado de las palabras";
-                } else if (/[(){}"]/g.test(palabra)) {
-                    // La palabra es un paréntesis, llave o comilla
-                    let nuevaFila = tableRef.insertRow(-1);
-                    let nuevaCelda1 = nuevaFila.insertCell(0); // #
-                    nuevaCelda1.textContent = conteoF;
-                    let nuevaCelda2 = nuevaFila.insertCell(1); // Palabra
-                    nuevaCelda2.textContent = palabra;
-                    let nuevaCelda3 = nuevaFila.insertCell(2); // No. Linea
-                    nuevaCelda3.textContent = a + 1;
-                    let nuevaCelda4 = nuevaFila.insertCell(3); // Tipo
-                    nuevaCelda4.textContent = "Caracter";
-                } else {
-                    // Verificar si la palabra está mal escrita
-                    let palabraCorrecta = Object.keys(tokens).find(key => key.toLowerCase() === palabraNormalizada.toLowerCase());
-                    if (palabraCorrecta) {
-                        // La palabra está mal escrita pero existe una versión correcta en las palabras reservadas
-                        let nuevaFilaErr = tableErr.insertRow(-1);
-                        let nuevaCeldaErr1 = nuevaFilaErr.insertCell(0); // #
-                        nuevaCeldaErr1.textContent = conteoF;
-                        let nuevaCeldaErr2 = nuevaFilaErr.insertCell(1); // Palabra
-                        nuevaCeldaErr2.textContent = palabra;
-                        let nuevaCeldaErr3 = nuevaFilaErr.insertCell(2); // No. Linea
-                        nuevaCeldaErr3.textContent = a + 1;
-                        let nuevaCeldaErr4 = nuevaFilaErr.insertCell(3); // Tipo Error
-                        nuevaCeldaErr4.textContent = "Léxico";
-                        let nuevaCeldaErr5 = nuevaFilaErr.insertCell(4); // Error
-                        nuevaCeldaErr5.textContent = "Palabra mal escrita";
-                    } else {
-                        // La palabra no está en las palabras reservadas
-                        let nuevaFila = tableRef.insertRow(-1);
-                        let nuevaCelda1 = nuevaFila.insertCell(0); // #
-                        nuevaCelda1.textContent = conteoF;
-                        let nuevaCelda2 = nuevaFila.insertCell(1); // Palabra
-                        nuevaCelda2.textContent = palabraNormalizada;
-                        let nuevaCelda3 = nuevaFila.insertCell(2); // No. Linea
-                        nuevaCelda3.textContent = a + 1;
-                        let nuevaCelda4 = nuevaFila.insertCell(3); // Tipo
-                        nuevaCelda4.textContent = "identificador";
-                    }
+    for (let numLinea = 0; numLinea < lineas.length; numLinea++) {
+        const palabras = lineas[numLinea].split(/\s+/);
+        
+        for (let i = 0; i < palabras.length; i++) {
+            const palabra = palabras[i];
+            
+            if (exprReservada.test(palabra)) {
+                if (!ExpresionSI.hasOwnProperty(palabra)) {
+                    ExpresionSI[palabra] = [];
                 }
+                ExpresionSI[palabra].push(numLinea + 1);
+                TipoSI[palabra] = "Reservada";
+
+            }else if (exprTipoDato.test(palabra)) {
+                if (!ExpresionSI.hasOwnProperty(palabra)) {
+                    ExpresionSI[palabra] = [];
+                }
+                ExpresionSI[palabra].push(numLinea + 1);
+                TipoSI[palabra] = "Tipo de Dato";
+             } else {
+                if (!ExpresionNO.hasOwnProperty(palabra)) {
+                    ExpresionNO[palabra] = [];
+                }
+                ExpresionNO[palabra].push(numLinea + 1);
             }
         }
     }
-    
-    separarfilas(newCodigoFuente,"|")
-}
 
+    conteoFilas = 0
+    for (const sicoincide in ExpresionSI) {
+        conteoFilas = conteoFilas + 1;
+        let nuevaFilaR = tableRef.insertRow();
+        let nRCelda0 = nuevaFilaR.insertCell(0);
+        let nRCelda1 = nuevaFilaR.insertCell(1);
+        let nRCelda2 = nuevaFilaR.insertCell(2);
+        let nRCelda3 = nuevaFilaR.insertCell(3);
+        nRCelda0.textContent = conteoFilas;
+        nRCelda1.textContent = sicoincide;
+        nRCelda2.textContent = ExpresionSI[sicoincide].join(', ');
+        nRCelda3.textContent = TipoSI[sicoincide];
+    }
+
+    conteoFilas = 0
+    for (const nocoincide in ExpresionNO) {
+        if (nocoincide != "\s")
+            {
+                conteoFilas = conteoFilas + 1;
+                let nuevaFilaE = tableErr.insertRow();
+                let neCelda0 = nuevaFilaE.insertCell(0);
+                let neCelda1 = nuevaFilaE.insertCell(1);
+                let neCelda2 = nuevaFilaE.insertCell(2);
+                let neCelda3 = nuevaFilaE.insertCell(3);
+                let neCelda4 = nuevaFilaE.insertCell(4);
+                neCelda0.textContent = conteoFilas;
+                neCelda1.textContent = nocoincide;
+                neCelda2.textContent = ExpresionNO[nocoincide].join(', ');
+                neCelda3.textContent = "Error Léxico";
+                neCelda4.textContent = "No Identificado";
+            }       
+    }
+}
+/*
 //Consultar si todas los tokens deben de ir en mayusculas al inicio o todo minúscula
 //algunas sentencias no se entienden su estructura
 // el ~ es el 126 de la tabla ascii
@@ -186,8 +178,6 @@ let tokenReservadas = ["arroz",         //public
                        "canasta"        //catch
 ];
 
-
-
 // Listas de tokens, palabras clave y símbolos
 let nottkns = ['\t', ',', '\s', '\n', 'none', null, ' ', ''];
 let palabrasClave = ["Entera", "Gaseosa", "Almendra", "Descremada", "Cafe", "Deslactosada", "Carrito", "Caja", "canasta-carrito", "Arroz", "Jabón", "Licor", "Papel", "Escaner", "salida", "muestra", "muestrafin", "producto", "sucursal", "marcas", "gondola", "botella;", "disponible", "ocupado", "guardia", "cantidad", "bandaentera", "camaras", "hay", "no-hay", "aquí"];
@@ -234,41 +224,6 @@ let palabrasClaveMap = {
     "ParseInt()": "bandaentera",
     ";": "#",
     "readLine()": "camaras"
-};
-
-function mostrarTokens(tokens) {
-    let tablaTokens = document.getElementById('tablaTokens').getElementsByTagName('tbody')[0];
-    tablaTokens.innerHTML = ''; // Limpiar la tabla de tokens
-
-    tokens.forEach(token => {
-        let fila = `<tr>
-                        <td>${token.linea}</td>
-                        <td>${token.tipo}</td>
-                        <td>${token.token}</td>
-                        <td>${token.regex}</td>
-                        <td>${token.subtipo}</td>
-                        <td>${token.valor}</td>
-                    </tr>`;
-        tablaTokens.innerHTML += fila;
-    });
 }
 
-function mostrarErrores(erroresLexicos) {
-    let tablaErrores = document.getElementById('tablaErrores').getElementsByTagName('tbody')[0];
-    tablaErrores.innerHTML = ''; // Limpiar la tabla de errores léxicos
-
-    erroresLexicos.forEach(error => {
-        let fila = `<tr>
-                        <td>${error.linea}</td>
-                        <td>${error.tipo}</td>
-                        <td>${error.token}</td>
-                        <td>${error.regex}</td>
-                        <td>${error.subtipo}</td>
-                        <td>${error.valor}</td>
-                        <td>${error.tipoError}</td>
-                        <td>${error.error}</td>
-                    </tr>`;
-        tablaErrores.innerHTML += fila;
-    });
-}
-
+*/

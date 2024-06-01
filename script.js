@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('btn-analisis-lexico').addEventListener('click', AnalisisLexico);
+    document.getElementById('btn-analisis-sintactico').addEventListener('click', AnalisisSintactico);
 });
 
 let ExpresionSI = {};
@@ -16,262 +17,345 @@ function limpiarTablas() {
     let tableReferencia = document.getElementById("tablaTokens");
     let tableErrores = document.getElementById("tablaErrores");
 
-    console.log(tableReferencia.rows.length);
     while (tableReferencia.rows.length > 1) {
         tableReferencia.deleteRow(1);
     }
 
-    console.log(tableErrores.rows.length);
-    while (tableErrores.rows.length> 1) {
+    while (tableErrores.rows.length > 1) {
         tableErrores.deleteRow(1);
+    }
+}
+
+function llenarTablas(resultado) {
+    let tableRef = document.getElementById("tablaTokens").getElementsByTagName('tbody')[0];
+    let tableErr = document.getElementById("tablaErrores").getElementsByTagName('tbody')[0];
+
+    // Llenar tabla de tokens
+    if (resultado.tokens && resultado.tokens.length > 0) {
+        resultado.tokens.forEach((token, index) => {
+            let newRow = tableRef.insertRow();
+            newRow.insertCell(0).innerText = index + 1;
+            newRow.insertCell(1).innerText = token.palabra;
+            newRow.insertCell(2).innerText = token.linea;
+            newRow.insertCell(3).innerText = token.tipo;
+        });
+    } else {
+        let newRow = tableRef.insertRow();
+        newRow.insertCell(0).innerText = "-";
+        newRow.insertCell(1).innerText = "No tokens";
+        newRow.insertCell(2).innerText = "-";
+        newRow.insertCell(3).innerText = "-";
+    }
+
+    // Llenar tabla de errores léxicos
+    if (resultado.errores && resultado.errores.length > 0) {
+        resultado.errores.forEach((error, index) => {
+            let newRow = tableErr.insertRow();
+            newRow.insertCell(0).innerText = index + 1;
+            newRow.insertCell(1).innerText = error.palabra;
+            newRow.insertCell(2).innerText = error.linea;
+            newRow.insertCell(3).innerText = error.tipoError;
+            newRow.insertCell(4).innerText = error.error;
+        });
+    } else {
+        let newRow = tableErr.insertRow();
+        newRow.insertCell(0).innerText = "-";
+        newRow.insertCell(1).innerText = "No errors";
+        newRow.insertCell(2).innerText = "-";
+        newRow.insertCell(3).innerText = "-";
+        newRow.insertCell(4).innerText = "-";
     }
 }
 
 function AnalisisLexico() {      
     limpiarTablas();
-    
-    let tableRef = document.getElementById("tablaTokens");
-    let tableErr = document.getElementById("tablaErrores");
-
     let codigoFuente = document.getElementById('codigoFuente').value;
-    const lineas = codigoFuente.split('\n');
+    let resultado = obtenerTokensYErrores(codigoFuente);
+    llenarTablas(resultado);
+}
 
-    // Expresión regular compilada
-    const exprReservada = new RegExp("^(arroz|jabón|licor|papel|estantería|producto|Super|mostrador|sucursal|gaseosa|rosaceas|muestra|muestrafin|scaner|salida|camaras|cupon|canasta)\s*$");
-    const exprTipoDato = new RegExp("(^entera|cantidad|almendra|deslactosada|descremada|cafe)\s*$");
-    const exprAlfabeto = new RegExp("/\s+/");
-    const exprCiclos = new RegExp("^(agua|pura|canasta|carrito|caja|pasillo|porque|porque pasillo|marcas|gondola|botella)\s*$");
-    const exprOperaLogico = new RegExp("^(_|o|disponible|ocupado|guardia)\s*$")
-    const exprOperaAsignacion = new RegExp("~=|d-")
-    const exprOperaRelacional = new RegExp("p~|p_|g_|g~")
-    const exprOperaAritmetica = new RegExp("#|s+|r-|m+|%")
+function AnalisisSintactico() {
+    limpiarTablaErroresSintacticos();
+    let codigoFuente = document.getElementById('codigoFuente').value;
+    let resultado = analizarCodigoFuente(codigoFuente);
+    if (!resultado.sintacticoCorrecto) {
+        llenarTablaErroresSintacticos(resultado.erroresSintacticos);
+        alert('Se encontraron errores sintácticos en el código fuente.');
+    } else {
+        alert('Análisis sintáctico exitoso.');
+    }
+}
 
-    for (let numLinea = 0; numLinea < lineas.length; numLinea++) {
-        const palabras = lineas[numLinea].split(/\s+/);
-        
-        for (let i = 0; i < palabras.length; i++) {
-            const palabra = palabras[i];
-            //Expresión Reservadas
-            if (exprReservada.test(palabra)) {
-                if (!ExpresionSI.hasOwnProperty(palabra)) {
-                    ExpresionSI[palabra] = [];
+function limpiarTablaErroresSintacticos() {
+    let tablaErroresSintacticos = document.getElementById("tablaErroresSintacticos").getElementsByTagName('tbody')[0];
+    while (tablaErroresSintacticos.rows.length > 0) {
+        tablaErroresSintacticos.deleteRow(0);
+    }
+}
+
+function llenarTablaErroresSintacticos(erroresSintacticos) {
+    let tablaErroresSintacticos = document.getElementById("tablaErroresSintacticos").getElementsByTagName('tbody')[0];
+    erroresSintacticos.forEach((error, index) => {
+        let newRow = tablaErroresSintacticos.insertRow();
+        newRow.insertCell(0).innerText = index + 1;
+        newRow.insertCell(1).innerText = error.linea;
+        newRow.insertCell(2).innerText = error.tipoError;
+        newRow.insertCell(3).innerText = error.mensaje;
+    });
+}
+
+function verificarCicloFor(tokens) {
+    function avanzar() {
+        tokenActual = tokens[++indice];
+    }
+
+    let indice = 0;
+    let tokenActual = tokens[indice];
+
+    if (tokenActual.palabra === 'caja') {
+        avanzar();
+        if (tokenActual.palabra === '(') {
+            avanzar();
+            if (verificarInicializacion() && verificarCondicion() && verificarActualizacion()) {
+                if (tokenActual.palabra === ')') {
+                    avanzar();
+                    if (tokenActual.palabra === '{') {
+                        avanzar();
+                        if (verificarInstrucciones()) {
+                            if (tokenActual.palabra === '}') {
+                                return true;
+                            }
+                        }
+                    }
                 }
-                ExpresionSI[palabra].push(numLinea + 1);
-                TipoSI[palabra] = "Reservada";
-            //Expresión Tipo de Dato
-            }else if (exprTipoDato.test(palabra)) {
-                if (!ExpresionSI.hasOwnProperty(palabra)) {
-                    ExpresionSI[palabra] = [];
-                }
-                ExpresionSI[palabra].push(numLinea + 1);
-                TipoSI[palabra] = "Tipo de Dato";
-            //Expresión Alfabeto
-             }else if (exprAlfabeto.test(palabra)) {
-                if (!ExpresionSI.hasOwnProperty(palabra)) {
-                    ExpresionSI[palabra] = [];
-                }
-                ExpresionSI[palabra].push(numLinea + 1);
-                TipoSI[palabra] = "Alfabeto";
-            //Expresión Ciclos
-            }else if (exprCiclos.test(palabra)) {
-                if (!ExpresionSI.hasOwnProperty(palabra)) {
-                    ExpresionSI[palabra] = [];
-                }
-                ExpresionSI[palabra].push(numLinea + 1);
-                TipoSI[palabra] = "Reservada de Ciclo";
-            //Expresión Operadores Lógicos
-            }else if (exprOperaLogico.test(palabra)) {
-                if (!ExpresionSI.hasOwnProperty(palabra)) {
-                    ExpresionSI[palabra] = [];
-                }
-                ExpresionSI[palabra].push(numLinea + 1);
-                TipoSI[palabra] = "Operador Lógico";
-            //Expresión Operadores Asignación
-            }else if (exprOperaAsignacion.test(palabra)) {
-                if (!ExpresionSI.hasOwnProperty(palabra)) {
-                    ExpresionSI[palabra] = [];
-                }
-                ExpresionSI[palabra].push(numLinea + 1);
-                TipoSI[palabra] = "Operador Asignación";
-            //Expresión Operadores Relacionales
-            }else if (exprOperaRelacional.test(palabra)) {
-                if (!ExpresionSI.hasOwnProperty(palabra)) {
-                    ExpresionSI[palabra] = [];
-                }
-                ExpresionSI[palabra].push(numLinea + 1);
-                TipoSI[palabra] = "Operador Relacional";
-            //Expresión Operadores Aritméticos
-            }else if (exprOperaAritmetica.test(palabra)) {
-                if (!ExpresionSI.hasOwnProperty(palabra)) {
-                    ExpresionSI[palabra] = [];
-                }
-                ExpresionSI[palabra].push(numLinea + 1);
-                TipoSI[palabra] = "Operador Aritméticos";
-             } else {
-                if (!ExpresionNO.hasOwnProperty(palabra)) {
-                    ExpresionNO[palabra] = [];
-                }
-                ExpresionNO[palabra].push(numLinea + 1);
             }
         }
     }
 
-    conteoFilas = 0
-    for (const sicoincide in ExpresionSI) {
-        conteoFilas = conteoFilas + 1;
-        let nuevaFilaR = tableRef.insertRow();
-        let nRCelda0 = nuevaFilaR.insertCell(0);
-        let nRCelda1 = nuevaFilaR.insertCell(1);
-        let nRCelda2 = nuevaFilaR.insertCell(2);
-        let nRCelda3 = nuevaFilaR.insertCell(3);
-        nRCelda0.textContent = conteoFilas;
-        nRCelda1.textContent = sicoincide;
-        nRCelda2.textContent = ExpresionSI[sicoincide].join(', ');
-        nRCelda3.textContent = TipoSI[sicoincide];
+    function verificarInicializacion() {
+        if (['Entera', 'Almendra', 'Descremada', 'Cafe'].includes(tokenActual.palabra)) {
+            avanzar();
+            if (tokenActual.tipo === 'identificador') {
+                avanzar();
+                if (tokenActual.palabra === '~=') {
+                    avanzar();
+                    if (tokenActual.tipo === 'entero') {
+                        avanzar();
+                        if (tokenActual.palabra === '#') {
+                            avanzar();
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    
+    function verificarCondicion() { 
+        if (tokenActual.tipo === 'identificador') {
+            avanzar();
+            if (['p~', 'g~', 'p_', 'g_'].includes(tokenActual.palabra)) {
+                avanzar();
+                if (tokenActual.tipo === 'entero') {
+                    avanzar();
+                    if (tokenActual.palabra === '#') {
+                        avanzar();
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    
+    function verificarActualizacion() {
+        if (tokenActual.tipo === 'identificador') {
+            avanzar();
+            if (tokenActual.palabra === 's+s+') {
+                avanzar();
+                if (tokenActual.palabra === '#') {
+                    avanzar();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    function verificarInstrucciones() {
+        while (verificarAsignacion() || verificarDeclaracion() || verificarOperacion() || verificarCuerpo() || verificarInstruccion()) {
+            // Avanzar al siguiente token
+        }
+        return true;
+    }
+    
+    function verificarAsignacion() {
+        if (tokenActual.tipo === 'identificador') {
+            avanzar();
+            if (tokenActual.palabra === '~=') {
+                avanzar();
+                if (verificarExpresion()) {
+                    if (tokenActual.palabra === '#') {
+                        avanzar();
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    
+    function verificarDeclaracion() {
+        if (['Entera', 'Almendra', 'Descremada', 'Cafe'].includes(tokenActual.palabra)) {
+            avanzar();
+            if (tokenActual.tipo === 'identificador') {
+                avanzar();
+                if (tokenActual.palabra === '~=') {
+                    avanzar();
+                    if (verificarExpresion()) {
+                        if (tokenActual.palabra === '#') {
+                            avanzar();
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    
+    function verificarOperacion() {
+        if (tokenActual.tipo === 'identificador') {
+            avanzar();
+            if (['s+', 'r-', 'm+', '%'].includes(tokenActual.palabra)) {
+                avanzar();
+                if (tokenActual.tipo === 'identificador') {
+                    if (tokenActual.palabra === '#') {
+                        avanzar();
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    
+    function verificarCuerpo() {
+        if (tokenActual.palabra === 'caja') {
+            return verificarCicloFor(tokens.slice(indice)); // Verificar un ciclo for anidado
+        }
+        return false;
+    }
+    
+    function verificarInstruccion() {
+        if (['caja', 'Entera', 'Almendra', 'Descremada', 'Cafe'].includes(tokenActual.palabra)) {
+            return verificarCicloFor(tokens.slice(indice)) || verificarDeclaracion();
+        }
+        return false;
     }
 
-    conteoFilas = 0
-    for (const nocoincide in ExpresionNO) {
-        if (nocoincide != "/\s/")
-            {
-                conteoFilas = conteoFilas + 1;
-                let nuevaFilaE = tableErr.insertRow();
-                let neCelda0 = nuevaFilaE.insertCell(0);
-                let neCelda1 = nuevaFilaE.insertCell(1);
-                let neCelda2 = nuevaFilaE.insertCell(2);
-                let neCelda3 = nuevaFilaE.insertCell(3);
-                let neCelda4 = nuevaFilaE.insertCell(4);
-                neCelda0.textContent = conteoFilas;
-                neCelda1.textContent = nocoincide;
-                neCelda2.textContent = ExpresionNO[nocoincide].join(', ');
-                neCelda3.textContent = "Error Léxico";
-                neCelda4.textContent = "No Identificado";
-            }       
+    return false;
+}
+
+function obtenerTokensYErrores(codigoFuente) {
+    const lineas = codigoFuente.split('\n');
+    let tokens = [];
+    let errores = [];
+
+    for (let i = 0; i < lineas.length; i++) {
+        const palabras = lineas[i].split(/\s+/);
+        for (let palabra of palabras) {
+            if (palabra === 'caja') {
+                tokens.push({
+                    palabra: 'caja',
+                    linea: i + 1,
+                    tipo: 'reservada'
+                });
+            } else if (palabra === '(' || palabra === ')' || palabra === '{' || palabra === '}' || palabra === '~=' || palabra === '#' || palabra === 's+s+' || palabra === 's+' || palabra === 'r-' || palabra === 'm+' || palabra === '%' || palabra === 'p~' || palabra === 'g~' || palabra === 'p_' || palabra === 'g_') {
+                tokens.push({
+                    palabra: palabra,
+                    linea: i + 1,
+                    tipo: 'simbolo'
+                });
+            } else if (['Entera', 'Almendra', 'Descremada', 'Cafe'].includes(palabra)) {
+                tokens.push({
+                    palabra: palabra,
+                    linea: i + 1,
+                    tipo: 'tipo_dato'
+                });
+            } else if (/^\d+$/.test(palabra)) {
+                tokens.push({
+                    palabra: palabra,
+                    linea: i + 1,
+                    tipo: 'entero'
+                });
+            } else if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(palabra)) {
+                tokens.push({
+                    palabra: palabra,
+                    linea: i + 1,
+                    tipo: 'identificador'
+                });
+            } else {
+                errores.push({
+                    palabra: palabra,
+                    linea: i + 1,
+                    tipoError: 'Desconocido',
+                    error: 'Token no reconocido'
+                });
+            }
+        }
     }
-}
-/*
-//Consultar si todas los tokens deben de ir en mayusculas al inicio o todo minúscula
-//algunas sentencias no se entienden su estructura
-// el ~ es el 126 de la tabla ascii
-let tokenAlfabeto = ["{","}","(",")","[","]",".",",","this"];
-
-let tokenNoIdentifica = ["enteral",     //(definición de metodos)
-                         "reintegro",   //(definición de metodos)
-                         "s +",         //(definición de metodos) / se asume que es s+ consultar
-                         "ms+"          //(sentencia de Reintegro) / se asume que es m+ consultar
-                        ]
-
-let tokenTipoDatos  = ["entera",         //int 
-                       "cantidad",       //integer
-                       "almendra",       //String
-                       "deslactosada",   //double 
-                       "descremada",     //float             
-                       "cafe"            //bool
-];   
-
-let tokenCiclos     = ["agua",              //abre Do While 
-                       "pura",              //cierra Do While
-                       "canasta",           //abre do while (cual es la correcta agua o canasta)
-                       "carrito",           //while  ---- no se comprende la estructura de ejemplo / (cual es la correcta pura o carrito)
-                       "caja",              //For
-                       "pasillo",           //if
-                       "porque",            //else ----- no es una palabra relacionada a mercado
-                       "porque pasillo",    //elseif ----- no es una palabra relacionada a mercado
-                       "marcas",            //switch
-                       "gondola",           //case
-                       "botella",           //break 
-];
-
-let tokenOperaLogic = ["_",             // and
-                       "o",             // or
-                       "disponible",    //true
-                       "ocupado",       //false
-                       "guardia",       //return
-];
-
-let tokenOperaAsign = ["~=",            // = 
-                       "d-"             // !=
-];
-
-let tokenOperarelac = ["p~",            // <= 
-                       "p_",            // <
-                       "g_",            // >
-                       "g~",            // >=
-];
-
-let tokenOperaAritm = ["#",             //;
-                       "s+",            // +
-                       "r-",            // -
-                       "m+",            // *
-                       "%"              // /
-];
-
-let tokenReservadas = ["arroz",         //public
-                       "jabón",         //private
-                       "licor",         //protected
-                       "papel",         //default
-                       "estantería",    //class (ciclo do while)
-                       "producto",      //class (palabras reservadas) / cual es la correcta?
-                       "Super",         //main
-                       "mostrador",     //static
-                       "sucursal",      //static (palabras reservadas) / cual es la correcta?
-                       "gaseosa",       //void
-                       "rosaceas",      //args
-                       "muestra",       //print ----- no es una palabra relacionada a mercado
-                       "muestrafin",    //println ----- no es una palabra relacionada a mercado
-                       "scaner",        //system
-                       "salida",        //out
-                       "camaras",       //readline
-                       "cupon",         //try
-                       "canasta"        //catch
-];
-
-// Listas de tokens, palabras clave y símbolos
-let nottkns = ['\t', ',', '\s', '\n', 'none', null, ' ', ''];
-let palabrasClave = ["Entera", "Gaseosa", "Almendra", "Descremada", "Cafe", "Deslactosada", "Carrito", "Caja", "canasta-carrito", "Arroz", "Jabón", "Licor", "Papel", "Escaner", "salida", "muestra", "muestrafin", "producto", "sucursal", "marcas", "gondola", "botella;", "disponible", "ocupado", "guardia", "cantidad", "bandaentera", "camaras", "hay", "no-hay", "aquí"];
-let tipos = ['void', 'str', 'float', 'int'];
-let simbolosEspeciales = [';', '{', '}', '<<', '(', ')', '{'];
-let simbolos = ['(', ')', '{', '}'];
-let simbolosEsp = ['='];
-let operadores = ['+', '*', '-', '/', '='];
-let operadoresError = ['+', '*', '-', '/', '=', "#", '@'];
-
-// Mapeo de palabras clave JAVA a CMARKET
-let palabrasClaveMap = {
-    "If": "hay",
-    "else": "no-hay",
-    "this": "aquí",
-    "INT": "Entera",
-    "VOID": "Gaseosa",
-    "STRING": "Almendra",
-    "FLOAT": "Descremada",
-    "BOOL": "Cafe",
-    "DOUBLE": "Deslactosada",
-    "WHILE": "Carrito",
-    "for": "Caja",
-    "Do-while": "canasta-carrito",
-    "Public": "Arroz",
-    "Private": "Jabón",
-    "Protected": "Licor",
-    "Default": "Papel",
-    "system": "Escaner",
-    "out": "salida",
-    "print": "muestra",
-    "println": "muestrafin",
-    "class": "producto",
-    "static": "sucursal",
-    "switch": "marcas",
-    "case": "gondola",
-    "break;": "botella",
-    "VERDADERO": "disponible",
-    "FALSO": "ocupado",
-    "return": "guardia",
-    "try": "",
-    "catch": "",
-    "Integer": "cantidad",
-    "ParseInt()": "bandaentera",
-    ";": "#",
-    "readLine()": "camaras"
+    return { tokens, errores };
 }
 
-*/
+function analizarTokens(tokens) {
+    let posicion = 0;
+    let erroresSintacticos = [];
+
+    function parsearRegla(regla) {
+        let componentes = REGLAS[regla];
+        for (let i = 0; i < componentes.length; i++) {
+            let componente = componentes[i];
+            if (componente === '|') continue;
+            if (REGLAS[componente]) {
+                if (!parsearRegla(componente)) return false;
+            } else {
+                if (posicion < tokens.length && tokens[posicion].tipo === componente) {
+                    posicion++;
+                } else {
+                    if (regla === '<instrucciones>' && componente === '<cuerpo>' && tokens[posicion] && tokens[posicion].palabra === 'caja') {
+                        erroresSintacticos.push({
+                            linea: tokens[posicion] ? tokens[posicion].linea : 'fin de entrada',
+                            tipoError: 'Estructura de ciclo anidado incorrecta',
+                            mensaje: 'Se encontró "caja" en lugar de un componente válido del ciclo'
+                        });
+                    } else {
+                        erroresSintacticos.push({
+                            linea: tokens[posicion] ? tokens[posicion].linea : 'fin de entrada',
+                            tipoError: 'Error de sintaxis',
+                            mensaje: `Se esperaba ${componente} pero se encontró ${tokens[posicion] ? tokens[posicion].tipo : 'fin de entrada'}`
+                        });
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    let sintacticoCorrecto = parsearRegla('<cuerpo>');
+    return { sintacticoCorrecto, erroresSintacticos };
+}
+
+function analizarCodigoFuente(codigoFuente) {
+    let resultadoLexico = obtenerTokensYErrores(codigoFuente);
+    let { tokens, errores } = resultadoLexico;
+
+    if (errores.length > 0) {
+        return { errores, tokens, sintacticoCorrecto: false, erroresSintacticos: [] };
+    }
+
+    let { sintacticoCorrecto, erroresSintacticos } = analizarTokens(tokens);
+    return { tokens, errores, sintacticoCorrecto, erroresSintacticos };
+}

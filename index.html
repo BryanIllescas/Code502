@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <script src="analizador.js"></script>
@@ -9,7 +8,6 @@
     <link rel="stylesheet" href="styles.css">
     <title>Compilador de Música CODE502</title>
 </head>
-
 <body>
     <header>
         <div class="container">
@@ -29,10 +27,9 @@
             <h2>Ingresa tu Código</h2>
             <textarea id="codigoFuente" rows="10" cols="10"></textarea>
             <div id="botones">
-                <button id= "btn-analisis-lexico">Analizar Léxico</button>
+                <button id="btn-analisis-lexico">Analizar Léxico</button>
                 <button id="btn-analisis-sintactico">Analizar Sintáctico</button>
                 <input type="file" id="archivo-input" accept=".mkt">
-
             </div>
         </section>
         <section id="resultado">
@@ -71,6 +68,19 @@
                 </tbody>
             </table>
         </section>
+        <section id="res_errores_sintacticos">
+            <h2>Errores Sintácticos</h2>
+            <table id="tablaErroresSintacticos">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Error</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </section>
     </main>
 
     <footer>
@@ -100,7 +110,9 @@
 
         // Asigna la función leerArchivo al evento change del input file
         document.getElementById('archivo-input').addEventListener('change', leerArchivo);
+
+        // Agrega el evento click al botón de "Analizar Sintáctico"
+        document.getElementById('btn-analisis-sintactico').addEventListener('click', AnalisisSintactico);
     </script>
 </body>
-
 </html>
